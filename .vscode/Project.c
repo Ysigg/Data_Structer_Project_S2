@@ -35,3 +35,22 @@ void insert(struct node* root, const char* word) {
 
     current_node->count++;
 }
+
+//search tries
+void search(struct node* root, const char* word, int* count) {
+    struct node* current_node = root;
+
+    for (int i = 0; word[i] != '\0'; i++) {
+        int index = word[i] - 'a';
+
+        if (current_node->children[index] == NULL) {
+            *count = 0;
+            return;
+        }
+
+        current_node = current_node->children[index];
+    }
+
+    *count = current_node->count;
+}
+
