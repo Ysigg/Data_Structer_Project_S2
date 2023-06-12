@@ -8,6 +8,7 @@ struct node {
     int count;
 };
 
+//buat node
 struct node* create_node() {
     struct node* new_node = (struct node*)malloc(sizeof(struct node));
     new_node->count = 0;
