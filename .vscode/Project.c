@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 int main() {
-    printf("asyuuuuuuuuuuuuuuuuuuuuuuuuuu");
+    printf("kontol");
 
     return 0;
 } 
