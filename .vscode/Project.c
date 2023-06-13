@@ -37,6 +37,119 @@ void inOrderTraversal(Disc* root) {
     printf("+----------------------------+----------------+-------+-------+---------------+\n");
 }
 
+int validateAuthor(char author[]) {
+    int length = strlen(author);
+    if (length < 5 || length > 25) {
+        return 0;
+    }
+    if (strncmp(author, "Mr. ", 4) != 0 && strncmp(author, "Mrs. ", 5) != 0) {
+        return 0;
+    }
+    return 1;
+}
+
+int validateYear(int year) {
+	int length = (year);
+    if (length < 1900 || length > 2023) {
+        return 0;
+    }
+    return 1;
+}
+
+int validateRate(char Rate[]) {
+	if (strcmp(Rate, "13+") == 0) {
+        return 1;
+    }
+    else if (strcmp(Rate, "15+") == 0) {
+        return 1;
+    }
+    else if (strcmp(Rate, "17+") == 0) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+int validateGenre(char genre[]) {
+	if (strcmp(genre, "Romance") == 0) {
+        return 6;
+    }
+	if (strcmp(genre, "Fantasy") == 0) {
+        return 5;
+    }
+    if (strcmp(genre, "Action") == 0) {
+        return 4;
+    }
+	else if (strcmp(genre, "Sci-fi") == 0) {
+        return 3;
+    }
+    else if (strcmp(genre, "Adventure") == 0) {
+        return 2;
+    }
+    else if (strcmp(genre, "Comedy") == 0) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+int validateStock(int stock) {
+    return stock >= 1;
+}
+
+void importDatabase(Disc** root) {
+    char title[51];
+    char author[10];
+    int releaseYear;
+    char rate[5];
+    char genre[20];
+    int stock;
+    
+    
+	strcpy(title, "Black Mermaid");
+	strcpy(author, "Walt Marney");
+	releaseYear = 2023;
+	strcpy(rate, "15+");
+	strcpy(genre, "Adventure");
+	stock = 64;
+    
+    
+    Disc* newDisc = createDisc(title, author, releaseYear, rate, genre, stock);
+    
+    if (*root == NULL) {
+        *root = newDisc;
+        printf("Insert Success!\n");
+        return;
+    }
+    
+    Disc* current = *root;
+    Disc* parent = NULL;
+    
+    while (1) {
+        parent = current;
+        
+        if (strcmp(title, current->title) < 0) {
+            current = current->left;
+            if (current == NULL) {
+                parent->left = newDisc;
+                return;
+            }
+        } else if (strcmp(title, current->title) > 0) {
+            current = current->right;
+            if (current == NULL) {
+                parent->right = newDisc;
+        
+                return;
+            }
+        } else {
+            printf("Disc with the same title already exists!\n");
+            return;
+        }
+    }
+}
+
 void insertDisc(Disc** root) {
     char title[51];
     char author[10];
@@ -45,23 +158,53 @@ void insertDisc(Disc** root) {
     char genre[20];
     int stock;
     
-    printf("Input title[5 - 50]: ");
-    scanf(" %[^\n]", title);
+    fgets(title, 51, stdin);
+	title[strcspn(title, "\n")] = 0;	
+	while (strlen(title) < 5 || strlen(title) > 50) {
+		printf("Input game title[5-25][unique]: ");
+		fgets(title,50, stdin);
+	    title[strcspn(title, "\n")] = 0;	
+	}
     
     printf("Input author[Mr. | Mrs.]: ");
     scanf(" %[^\n]", author);
+    while (!validateAuthor(author)) {
+    	printf("Input author[Mr. | Mrs.]: ");
+        scanf(" %[^\n]", author);
+    }
     
-    printf("Input release Year: ");
+    printf("Input release Year[1900-2023]: ");
     scanf("%d", &releaseYear);
+    getchar();
+    while (!validateYear(releaseYear)) {
+        printf("Input release Year[1900-2023]: ");
+        scanf("%d", &releaseYear);
+        getchar();
+    }
     
     printf("Input Rate[13+ | 15+ | 17+]: ");
     scanf(" %[^\n]", rate);
+    while (!validateRate(rate)) {
+        printf("Input Rate[13+ | 15+ | 17+]: ");
+        scanf(" %[^\n]", rate);
+    }
     
-    printf("Input Genre[Action | Sci-fi | Adventure | Comedy | Fantasy]: ");
+    printf("Input Genre[Action | Sci-fi | Adventure | Comedy | Fantasy | Romance]: ");
     scanf(" %[^\n]", genre);
+    while (!validateGenre(genre)) {
+        printf("Input Genre[Action | Sci-fi | Adventure | Comedy | Fantasy | Romance]: ");
+        scanf(" %[^\n]", genre);
+    }
     
-    printf("Input Stock[>0]: ");
+    printf("Input Stock[>= 1]: ");
     scanf("%d", &stock);
+    getchar();
+    while (!validateStock(stock)) {
+        printf("Input Stock[>= 1]: ");
+        scanf("%d", &stock);
+        getchar();
+    }
+    
     
     Disc* newDisc = createDisc(title, author, releaseYear, rate, genre, stock);
     
@@ -96,6 +239,8 @@ void insertDisc(Disc** root) {
             return;
         }
     }
+    printf("\n\nPress Enter to Continue...");
+    getchar();
 }
 
 void viewDisc(Disc* root) {
@@ -224,7 +369,8 @@ void adminMenu(Disc** root) {
         printf("1. Insert Disc\n");
         printf("2. View Disc\n");
         printf("3. Delete Disc\n");
-        printf("4. Back\n");
+        printf("4. Import from Database\n");
+        printf("5. Back\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
         
@@ -239,7 +385,10 @@ void adminMenu(Disc** root) {
                 deleteDisc(root);
                 break;
             case 4:
-                return;
+            	importDatabase(root);
+                break;
+            case 5:
+            	return;
             default:
                 printf("Invalid choice! Please try again.\n");
         }
@@ -259,6 +408,7 @@ void userMenu(Disc* root) {
         
         switch (choice) {
             case 1:
+            
                 viewDisc(root);
                 break;
             case 2:
